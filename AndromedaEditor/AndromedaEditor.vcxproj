@@ -146,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AndromedaEditor.cpp" />
+    <ClCompile Include="GameProject\ProjectWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AndromedaEditor.rc" />

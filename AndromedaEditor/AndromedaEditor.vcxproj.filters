@@ -32,6 +32,9 @@
     <ClCompile Include="AndromedaEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameProject\ProjectWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AndromedaEditor.rc">
