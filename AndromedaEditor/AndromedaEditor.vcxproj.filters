@@ -27,12 +27,24 @@
     <ClInclude Include="AndromedaEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GameProject\WOpenProject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameProject\WNewProject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AndromedaEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameProject\ProjectWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameProject\WOpenProject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameProject\WNewProject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

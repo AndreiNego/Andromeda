@@ -3,6 +3,7 @@
 
 #include "framework.h"
 #include "AndromedaEditor.h"
+#include "GameProject/WOpenProject.h"
 
 #define MAX_LOADSTRING 100
 
@@ -16,7 +17,8 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK    Create(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK    CreateProject(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK    OpenProject(HWND, UINT, WPARAM, LPARAM);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -136,7 +138,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
             case ID_FILE_NEWPROJECT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_CREATE), hWnd, Create);
+                DialogBox(hInst, MAKEINTRESOURCE(IDD_CREATEPROJ), hWnd, CreateProject);
+                break;
+            case ID_FILE_OPEN:
+                DialogBox(hInst, MAKEINTRESOURCE(IDD_OPENPROJ), hWnd, OpenProject);
                 break;
             case IDM_EXIT:
                 DestroyWindow(hWnd);
@@ -162,7 +167,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return 0;
 }
-
+//About Box is template
+// call template from top of class
 // Message handler for about box.
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -182,7 +188,32 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return (INT_PTR)FALSE;
 }
-INT_PTR CALLBACK Create(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK CreateProject(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    UNREFERENCED_PARAMETER(lParam);
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        return (INT_PTR)TRUE;
+    case WM_GETTEXT:
+        
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDC_NAME) {
+            std::string spName;
+            LPCSTR pName = spName.c_str();
+         
+        }
+        if (/*LOWORD(wParam) == IDC_BUTTON_NAME ||*/ LOWORD(wParam) == IDCANCEL)
+        {
+            
+           EndDialog(hDlg, LOWORD(wParam));
+           return (INT_PTR)TRUE;
+        }
+        break;
+    }
+    return (INT_PTR)FALSE;
+}
+INT_PTR CALLBACK OpenProject(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     UNREFERENCED_PARAMETER(lParam);
     switch (message)
@@ -191,11 +222,10 @@ INT_PTR CALLBACK Create(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         return (INT_PTR)TRUE;
 
     case WM_COMMAND:
-        if (LOWORD(wParam) == IDC_BUTTON_NAME|| LOWORD(wParam) == IDCANCEL)
+        if (/*LOWORD(wParam) == IDOK ||*/ LOWORD(wParam) == IDCANCEL)
         {
-            
-           EndDialog(hDlg, LOWORD(wParam));
-           return (INT_PTR)TRUE;
+            EndDialog(hDlg, LOWORD(wParam));
+            return (INT_PTR)TRUE;
         }
         break;
     }

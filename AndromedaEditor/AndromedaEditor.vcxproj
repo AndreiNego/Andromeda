@@ -116,6 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -132,6 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -145,12 +147,16 @@
   <ItemGroup>
     <ClInclude Include="AndromedaEditor.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="GameProject\WOpenProject.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="GameProject\WNewProject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AndromedaEditor.cpp" />
     <ClCompile Include="GameProject\ProjectWindow.cpp" />
+    <ClCompile Include="GameProject\WOpenProject.cpp" />
+    <ClCompile Include="GameProject\WNewProject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AndromedaEditor.rc" />
