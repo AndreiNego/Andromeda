@@ -31,10 +31,8 @@
     <ClInclude Include="Utilities\Utilities.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Common\Id.cpp" />
     <ClCompile Include="Components\Entity.cpp" />
     <ClCompile Include="Components\Transform.cpp" />
-    <ClCompile Include="Utilities\MathTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

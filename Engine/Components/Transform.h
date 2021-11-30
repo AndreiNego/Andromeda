@@ -7,12 +7,9 @@ namespace andromeda::transform {
 	
 	struct init_info
 	{
-		math::Quaternion rotation =  math::Quaternion(0, 0, 0, 1);
-		math::Vector3 position = math::Vector3(0, 0, 0);
-		math::Vector3 scale = math::Vector3(0, 0, 0);
-	//	double position[3]{};
-	//	double rotation[4]{1,1,1,1};
-	//	double scale[3]{ 1,1,1 };
+		f32 position[3]{};
+		f32 rotation[4]{};
+		f32 scale[3]{ 1.f,1.f,1.f };
 	};
 	component create_transform(const init_info& info, game_entity::entity entity);
 	void remove_transform(component c);

@@ -14,9 +14,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Components\Entity.cpp" />
-    <ClCompile Include="Common\Id.cpp" />
     <ClCompile Include="Components\Transform.cpp" />
-    <ClCompile Include="Utilities\MathTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

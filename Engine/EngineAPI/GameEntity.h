@@ -1,6 +1,5 @@
 #pragma once
-
-#include "Components/ComponentsHeaders.h"
+#include "ComponentsHeaders.h"
 #include "TransformComponent.h"
 
 namespace andromeda::game_entity {
@@ -8,7 +7,7 @@ namespace andromeda::game_entity {
 	class entity {
 	public:
 		constexpr explicit entity(entity_id id) : _id{ id } {}
-		constexpr explicit entity() : _id{ id::invalid_id } {}
+		constexpr entity() : _id{ id::invalid_id } {}
 		constexpr entity_id get_id() const { return _id; }
 		const bool is_valid() const { return id::is_valid(_id); }
 

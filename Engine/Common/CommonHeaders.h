@@ -5,7 +5,9 @@
 #include <typeinfo>
 
 //mathlibrary
-#include <glm/glm.hpp>
+#if defined(_WIN64)
+#include <DirectXMath.h>
+#endif
 
 //common headers
 #include "..\Utilities\Utilities.h"
