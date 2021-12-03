@@ -1,4 +1,5 @@
 ﻿using Andromeda.Common;
+using Andromeda.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,6 +21,10 @@ namespace Andromeda.GameProject
         public string ProjectPath { get; set; }
         [DataMember]
         public DateTime Date { get; set;}
+
+        public string FullPath { get => $"{ProjectPath}{ProjectName}{Project.Extension}"; }
+
+        public byte[] Screenshot { get; set; }
     }
     [DataContract]
     public class ProjectDataList
@@ -40,8 +45,48 @@ namespace Andromeda.GameProject
 
         private static void ReadProjectData()
         {
-            throw new NotImplementedException();
+            if (File.Exists(_projectDataPath))
+            {
+                var projects = Serializer.FromFile<ProjectDataList>(_projectDataPath).Projects.OrderByDescending(x => x.Date);
+                _projects.Clear();
+                foreach(var project in projects)
+                {
+                    if (File.Exists(project.FullPath))
+                    {
+                        project.Screenshot = File.ReadAllBytes($@"{project.ProjectPath}\.Andromeda\Screenshot.jpg");
+                    }
+                }
+            }
         }
+
+        private static void WriteProjectData()
+        {
+            var projects = _projects.OrderBy(x => x.Date).ToList();
+            Serializer.ToFile(new ProjectDataList() { Projects = projects }, _projectDataPath);
+           
+        }
+
+        public static Project Open(ProjectData data)
+        {
+            ReadProjectData();
+            ProjectData project = _projects.FirstOrDefault(x => x.FullPath == data.FullPath);
+            if(project != null)
+            {
+                project.Date = DateTime.Now;
+            }
+            else
+            {
+                project = data;
+                project.Date = DateTime.Now;
+                _projects.Add(project);
+            }
+            WriteProjectData();
+
+            return null;
+        }
+
+       
+
         static OpenProject()
         {
             try

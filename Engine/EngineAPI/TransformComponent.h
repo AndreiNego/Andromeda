@@ -1,6 +1,6 @@
 #pragma once
-#include "Components/ComponentsHeaders.h"
-#include "Utilities/MathTypes.h"
+#include "../Components/ComponentsHeaders.h"
+#include "../Utilities/MathTypes.h"
 
 namespace andromeda::transform {
 
