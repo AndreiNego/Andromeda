@@ -31,7 +31,7 @@ namespace Andromeda.GameProject
     }
     public class NewProject : ViewModelBase
     {
-        private readonly string _templatePath = @"..\..\AndromedaEditor\ProjectTemplates";
+        private readonly string _templatePath = @"..\..\Andromeda\ProjectTemplates";
         private string _projectName = "NewProject";
         public string ProjectName
         {

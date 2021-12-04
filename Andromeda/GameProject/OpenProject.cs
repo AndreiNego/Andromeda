@@ -24,6 +24,8 @@ namespace Andromeda.GameProject
 
         public string FullPath { get => $"{ProjectPath}{ProjectName}{Project.Extension}"; }
 
+        public byte[] Icon { get; set; }
+
         public byte[] Screenshot { get; set; }
     }
     [DataContract]
