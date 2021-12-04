@@ -55,6 +55,7 @@ namespace Andromeda.GameProject
                 {
                     if (File.Exists(project.FullPath))
                     {
+                        project.Icon = File.ReadAllBytes($@"{project.ProjectPath}\.Andromeda\Icon.png");
                         project.Screenshot = File.ReadAllBytes($@"{project.ProjectPath}\.Andromeda\Screenshot.jpg");
                     }
                 }

@@ -162,7 +162,7 @@ namespace Andromeda.GameProject
                 }
                 var dirInfo = new DirectoryInfo(path + @".Andromeda\");
                 dirInfo.Attributes |= FileAttributes.Hidden;
-                //    File.Copy(template.IconFilePath, Path.GetFullPath(Path.Combine(dirInfo.FullName, "Icon.png")));
+                File.Copy(template.IconFilePath, Path.GetFullPath(Path.Combine(dirInfo.FullName, "Icon.png")));
                 File.Copy(template.ScreenshotFilePath, Path.GetFullPath(Path.Combine(dirInfo.FullName, "Screenshot.jpg")));
 
                 var project = new Project(ProjectName, path);
