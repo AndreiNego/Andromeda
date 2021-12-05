@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Andromeda"
-        mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        Title="MainWindow" Height="600" Width="800">
+        xmlns:editors="clr-namespace:Andromeda.Editors"
+        mc:Ignorable="d" WindowStartupLocation="CenterScreen" WindowState="Maximized"
+        Title="Andromeda" Height="1080" Width="1920">
     <Grid>
-
+        <editors:WorldEditorView/>
     </Grid>
 </Window>

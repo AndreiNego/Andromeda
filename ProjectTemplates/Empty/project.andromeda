@@ -1,7 +1,7 @@
 <Game z:Id="i1" xmlns="http://schemas.datacontract.org/2004/07/Andromeda.GameProject" 
 xmlns:i="http://www.w3.org/2001/XMLSchema-instance" 
 xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/">
-<Name>(0)</Name>
+<Name>Empty</Name>
 <Path>(1)</Path>
 	<ActiveScene z:Ref="i2"/>
 	<Scenes>

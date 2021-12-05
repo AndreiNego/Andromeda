@@ -31,7 +31,7 @@ namespace Andromeda.GameProject
     }
     public class NewProject : ViewModelBase
     {
-        private readonly string _templatePath = @"..\..\Andromeda\ProjectTemplates";
+        private readonly string _templatePath = @"D:\Development\GameEngine\Andromeda\ProjectTemplates";
         private string _projectName = "NewProject";
         public string ProjectName
         {
@@ -162,7 +162,7 @@ namespace Andromeda.GameProject
                 }
                 var dirInfo = new DirectoryInfo(path + @".Andromeda\");
                 dirInfo.Attributes |= FileAttributes.Hidden;
-                File.Copy(template.IconFilePath, Path.GetFullPath(Path.Combine(dirInfo.FullName, "Icon.png")));
+                File.Copy(template.IconFilePath, Path.GetFullPath(Path.Combine(dirInfo.FullName, "Icon.ico")));
                 File.Copy(template.ScreenshotFilePath, Path.GetFullPath(Path.Combine(dirInfo.FullName, "Screenshot.jpg")));
 
                 var project = new Project(ProjectName, path);
@@ -188,19 +188,15 @@ namespace Andromeda.GameProject
                 foreach (var file in templatesFiles)
                 {
                    var template = Serializer.FromFile<ProjectTemplate>(file);
+                    template.IconFilePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), "Icon.ico"));
+                    template.Icon = File.ReadAllBytes(template.IconFilePath);
                     template.ScreenshotFilePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), "Screenshot.jpg"));
                     template.Screenshot = File.ReadAllBytes(template.ScreenshotFilePath);
                     template.ProjectFilePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), template.ProjectFile));
 
                     _projectTemplates.Add(template);
-               /*     var template = new ProjectTemplate()
-                    {
-                        ProjectType = "EmptyProject",
-                        ProjectFile = "project.Andromeda",
-                        Folders = new List<string>() { ".Andromeda", "Content", "GameCode" }
-                    };
-                    Serializer.ToFile(template, file);
-               */
+               
+               
                 }
             }
             catch(Exception ex)
