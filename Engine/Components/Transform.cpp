@@ -3,9 +3,9 @@
 namespace andromeda::transform {
 
 	namespace {
-		utl::vector<DirectX::XMFLOAT3> positions;
-		utl::vector<DirectX::XMFLOAT4> rotations;
-		utl::vector<DirectX::XMFLOAT3> scales;
+		utl::vector<math::Vector3> positions;
+		utl::vector<math::Vector4> rotations;
+		utl::vector<math::Vector3> scales;
 	}
 	component 
 		create_transform(const init_info& info, game_entity::entity entity)

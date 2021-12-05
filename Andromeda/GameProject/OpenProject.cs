@@ -85,7 +85,7 @@ namespace Andromeda.GameProject
             }
             WriteProjectData();
 
-            return null;
+            return Project.Load(project.FullPath);
         }
 
        
