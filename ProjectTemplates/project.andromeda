@@ -3,11 +3,11 @@ xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
 xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/">
 <Name>{0}</Name>
 <Path>{1}</Path>
-<ActiveScene z:Ref="i2"/>
+<ActiveScene i2=true/>
 <Scenes>
-<Scene z:Id="i2">
-<Name>Default Scene</Name>
-<Project z:Ref="i1"/>
-<IsActive>true</IsActive>
-</Scene>
+<Scene z:Id="i2"><GameEntities xmlns:a="http://schemas.datacontract.org/2004/07/Andromeda.Components"/>
+ <IsActive>true</IsActive>
+ <Name>Default Scene</Name>
+ <Project z:Ref="i1"/>
+ </Scene>
 </Scenes></Game>

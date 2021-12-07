@@ -15,7 +15,7 @@ using System.Windows.Input;
 namespace Andromeda.GameProject
 {
     [DataContract(Name = "Game")]
-    class Project : ViewModelBase
+    public class Project : ViewModelBase
     {
         public static string Extension { get; } = ".andromeda";
         [DataMember]
@@ -23,9 +23,9 @@ namespace Andromeda.GameProject
         [DataMember]
         public string Path { get; private set; }
 
-        public string FullPath => $"{Path}{Name}{Extension}";
+        public string FullPath => $@"{Path}{Name}{Extension}";
 
-        [DataMember(Name ="Scenes")]
+        [DataMember(Name = "Scenes")]
         private ObservableCollection<Scene> _scenes = new ObservableCollection<Scene>();
         public ReadOnlyObservableCollection<Scene> Scenes { get; private set; }
 
@@ -47,11 +47,17 @@ namespace Andromeda.GameProject
 
         public static Project Current => Application.Current.MainWindow.DataContext as Project;
 
-        public static UndoRedo UndoRedo { get;} = new UndoRedo();
+        public static UndoRedo UndoRedo { get; } = new UndoRedo();
 
-        public ICommand AddScene { get; private set; }
+        public ICommand UndoCommand { get; private set; }
 
-        public ICommand RemoveScene { get; private set; }
+        public ICommand RedoCommand {get; private set;}
+
+        public ICommand AddSceneCommand { get; private set; }
+
+        public ICommand RemoveSceneCommand { get; private set; }
+
+        public ICommand SaveCommand { get; private set; }
 
         private void AddSceneInternal(string sceneName)
         {
@@ -91,7 +97,7 @@ namespace Andromeda.GameProject
             }
             ActiveScene = Scenes.FirstOrDefault<Scene>(x => x.IsActive);
 
-            AddScene = new RelayCommand<object>(x =>
+            AddSceneCommand = new RelayCommand<object>(x =>
            {
                AddSceneInternal($"New Scene { _scenes.Count}");
                var newScene = _scenes.Last();
@@ -103,7 +109,7 @@ namespace Andromeda.GameProject
                    ));
            });
 
-            RemoveScene = new RelayCommand<Scene>(x =>
+            RemoveSceneCommand = new RelayCommand<Scene>(x =>
             {
                 var sceneIndex = _scenes.IndexOf(x);
                 RemoveSceneInternal(x);
@@ -111,8 +117,12 @@ namespace Andromeda.GameProject
                     () => _scenes.Insert(sceneIndex, x),
                     () => RemoveSceneInternal(x),
                     $"Remove {x.Name}"
-                    )) ;
-            });
+                    ));
+            }, x => !x.IsActive);
+
+            UndoCommand = new RelayCommand<object>(x => UndoRedo.Undo());
+            RedoCommand = new RelayCommand<object>(x => UndoRedo.Redo());
+            SaveCommand = new RelayCommand<object>(x => Save(this));
         }
 
         public Project(string name, string path)

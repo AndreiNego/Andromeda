@@ -1,4 +1,5 @@
-﻿using Andromeda.GameProject;
+﻿using Andromeda.Components;
+using Andromeda.GameProject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,16 @@ namespace Andromeda.Editors
             InitializeComponent();
         }
 
-      
+        private void OnAddGameEntity_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as Button;
+            var vm = btn.DataContext as Scene;
+            vm.AddGameEntityCommand.Execute(new GameEntity(vm) { Name = "Empty Game Entity" });
+        }
+        private void OnGameEntities_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+          //  var entity = (sender as ListBox).SelectedItem[0];
+          //  GameEntityView.
+        }
     }
 }
