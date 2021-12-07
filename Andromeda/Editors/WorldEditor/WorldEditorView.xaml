@@ -16,9 +16,9 @@
                 <RowDefinition>
                 </RowDefinition>
             </Grid.RowDefinitions>
-            <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
+            <GridSplitter HorizontalAlignment="Stretch" Height="5" VerticalAlignment="Top"/>
         </Grid>
-        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch"/>
+        <GridSplitter HorizontalAlignment="Left" Width="5"/>
         <Grid Grid.Column="1" Margin="5,0,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition>
