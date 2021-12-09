@@ -1,5 +1,6 @@
 ﻿using Andromeda.Components;
 using Andromeda.GameProject;
+using Andromeda.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,8 +36,27 @@ namespace Andromeda.Editors
         }
         private void OnGameEntities_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-          //  var entity = (sender as ListBox).SelectedItem[0];
-          //  GameEntityView.
+            GameEntityView.Instance.DataContext = null;
+            var listBox = sender as ListBox;
+            if (e.AddedItems.Count > 0)
+            {
+                GameEntityView.Instance.DataContext = (sender as ListBox).SelectedItems[0];
+            }
+            var newSelection = listBox.SelectedItems.Cast<GameEntity>().ToList();
+            var previousSelection = newSelection.Except(e.AddedItems.Cast<GameEntity>()).Concat(e.RemovedItems.Cast<GameEntity>()).ToList();
+
+            Project.UndoRedo.Add(new UndoRedoAction(
+                () =>
+                {
+                    listBox.UnselectAll();
+                    previousSelection.ForEach(x => (listBox.ItemContainerGenerator.ContainerFromItem(x) as ListBoxItem).IsSelected = true);
+                },
+                () =>
+                {
+                    listBox.UnselectAll();
+                    newSelection.ForEach(x => (listBox.ItemContainerGenerator.ContainerFromItem(x) as ListBoxItem).IsSelected = true);
+                }, "Selection Changed"
+                ));
         }
     }
 }

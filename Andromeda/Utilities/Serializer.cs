@@ -22,7 +22,8 @@ namespace Andromeda.Utilities
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                // TODO: log error
+                Logger.Log(MessageType.Error, $"Error serializing {instance} to {path}");
+                throw;
             }
         }
         internal static T FromFile<T>(string path)
@@ -37,7 +38,8 @@ namespace Andromeda.Utilities
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                return default;
+                Logger.Log(MessageType.Error, $"Failed to deserialize {path}");
+                throw;
             }
         }
     }

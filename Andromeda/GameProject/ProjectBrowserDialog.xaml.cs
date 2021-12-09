@@ -22,6 +22,7 @@ namespace Andromeda.GameProject
         public ProjectBrowserDialog()
         {
             InitializeComponent();
+            Loaded += OnProjectBrowserDialogLoaded;
         }
         private void OnToggleButton_Click(object sender, RoutedEventArgs e)
         {
@@ -45,6 +46,16 @@ namespace Andromeda.GameProject
                 newProjectButton.IsChecked = true;
             }
             
+        }
+        private void OnProjectBrowserDialogLoaded(object sender, RoutedEventArgs e)
+        {
+            Loaded -= OnProjectBrowserDialogLoaded;
+            if (OpenProject.Projects.Any())
+            {
+                openProjectButton.IsEnabled = false;
+                openProjectView.Visibility = Visibility.Hidden;
+                OnToggleButton_Click(newProjectButton, new RoutedEventArgs());
+            }
         }
     }
 }

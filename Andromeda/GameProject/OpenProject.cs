@@ -107,6 +107,8 @@ namespace Andromeda.GameProject
             {
 
                 Debug.WriteLine(ex.Message);
+                Logger.Log(MessageType.Error, $"Failed to read project data");
+                throw;
             }
         }
     }

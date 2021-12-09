@@ -165,8 +165,11 @@ namespace Andromeda.GameProject
                 File.Copy(template.IconFilePath, Path.GetFullPath(Path.Combine(dirInfo.FullName, "Icon.ico")));
                 File.Copy(template.ScreenshotFilePath, Path.GetFullPath(Path.Combine(dirInfo.FullName, "Screenshot.jpg")));
 
-                var project = new Project(ProjectName, path);
-                Serializer.ToFile(project, path + $"{ProjectName}" + Project.Extension);
+                var projectXml = File.ReadAllText(template.ProjectFilePath);
+                projectXml = string.Format(projectXml, ProjectName, ProjectPath);
+                var projectPath = Path.GetFullPath(Path.Combine(path, $"{ProjectName}{Project.Extension}"));
+                File.WriteAllText(projectPath, projectXml);
+
                 return path;
                 
             }
@@ -174,7 +177,8 @@ namespace Andromeda.GameProject
             {
 
                 Debug.WriteLine(ex.Message);
-                return string.Empty;
+                Logger.Log(MessageType.Error, $"Failed to create {ProjectName}");
+                throw;
             }
 
         }
@@ -202,7 +206,8 @@ namespace Andromeda.GameProject
             catch(Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                //TODO: Log Error
+                Logger.Log(MessageType.Error, $"Failed to read project templates");
+                throw;
             }
         }
     }
