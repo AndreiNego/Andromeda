@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:Andromeda"
         xmlns:editors="clr-namespace:Andromeda.Editors"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen" WindowState="Maximized"
-        Title="Andromeda" Height="1080" Width="1920">
+        Title="Andromeda" Height="1080" Width="1920"
+        Style="{StaticResource AndromedaWindowsStyle}">
     <Grid>
         <editors:WorldEditorView/>
     </Grid>

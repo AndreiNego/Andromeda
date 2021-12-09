@@ -9,7 +9,8 @@
     <UserControl.DataContext>
         <local:OpenProject/>
     </UserControl.DataContext>
-    <StackPanel Background="White">
+    <Border CornerRadius="3" Background="{StaticResource Editor.Window.GrayBrush3}" Width="700" HorizontalAlignment="Center" Margin="0,30">
+    <StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <ListBox Width="195" Height="250" ItemsSource="{Binding Projects}"
                      x:Name="projectsListBox" SelectedIndex="0">
@@ -42,5 +43,6 @@
             <Button Content="Exit" Width="96" Margin="30,0,0,0" IsCancel="True"/>
         </StackPanel>
     </StackPanel>
+    </Border>
 </UserControl>
 

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Andromeda": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
