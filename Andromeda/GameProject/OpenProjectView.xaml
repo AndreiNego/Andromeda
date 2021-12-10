@@ -6,6 +6,9 @@
              xmlns:local="clr-namespace:Andromeda.GameProject"
              mc:Ignorable="d"  Width="800"
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+     
+    </UserControl.Resources>
     <UserControl.DataContext>
         <local:OpenProject/>
     </UserControl.DataContext>
@@ -15,17 +18,23 @@
             <ListBox Width="195" Height="250" ItemsSource="{Binding Projects}"
                      x:Name="projectsListBox" SelectedIndex="0">
                 <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
+                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemStyle}">
                         <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick"/>
                     </Style>
                 </ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
+                            <StackPanel Width="180">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{Binding Icon}" Margin="0,0,5,0"/>
-                            <TextBlock Text="{Binding ProjectName}"/>
-                        </StackPanel>
-                    </DataTemplate>
+                                    <TextBlock Text="{Binding ProjectName}" FontSize="20" FontFamily="Bahnschrift condensed"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                                <TextBlock Text="{Binding ProjectPath}"  TextTrimming="WordEllipsis"/>
+                                <TextBlock Text="{Binding Date}" FontSize="10"/>
+                            </StackPanel>
+                        
+                        </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
             <Border Width="400" Height="250" Margin="5,0,0,0">
