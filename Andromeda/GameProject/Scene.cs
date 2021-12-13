@@ -51,13 +51,14 @@ namespace Andromeda.GameProject
             }
         }
         [DataMember(Name = nameof(GameEntities))]
-        private ObservableCollection<GameEntity> _gameEntities = new ObservableCollection<GameEntity>();
+        private readonly ObservableCollection<GameEntity> _gameEntities = new();
         
         public ReadOnlyObservableCollection<GameEntity> GameEntities { get; private set; }
 
         public ICommand AddGameEntityCommand { get; private set; }
         public ICommand RemoveGameEntityCommand { get; private set; }
         private void AddGameEntity(GameEntity entity, int index = -1)
+      
         {
             Debug.Assert(!_gameEntities.Contains(entity));
             entity.IsActive = IsActive;
@@ -69,12 +70,14 @@ namespace Andromeda.GameProject
             {
                 _gameEntities.Insert(index, entity);
             }
+            GameEntities = new ReadOnlyObservableCollection<GameEntity>(_gameEntities);
         }
         private void RemoveGameEntity(GameEntity entity)
         {
             Debug.Assert(_gameEntities.Contains(entity));
             entity.IsActive = false;
             _gameEntities.Remove(entity);
+            GameEntities = new ReadOnlyObservableCollection<GameEntity>(_gameEntities);
         }
 
 

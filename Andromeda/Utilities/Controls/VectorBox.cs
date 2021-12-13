@@ -22,16 +22,16 @@ namespace Andromeda.Utilities.Controls
             get => (VectorType)GetValue(VectorTypeProperty);
             set => SetValue(VectorTypeProperty, value);
         }
-        public static readonly DependencyProperty VectorTypeProperty = DependencyProperty.Register(nameof(VectorType), typeof(VectorType), typeof(NumberBox),
-         new FrameworkPropertyMetadata(VectorType.Vector3));
+        public static readonly DependencyProperty VectorTypeProperty = DependencyProperty.Register(nameof(VectorType), typeof(VectorType), typeof(VectorBox),
+         new PropertyMetadata(VectorType.Vector3));
 
         public Orientation Orientation
         {
             get => (Orientation)GetValue(OrientationProperty);
             set => SetValue(OrientationProperty, value);
         }
-        public static readonly DependencyProperty OrientationProperty = DependencyProperty.Register(nameof(Orientation), typeof(Orientation), typeof(NumberBox),
-         new FrameworkPropertyMetadata(VectorType.Vector4));
+        public static readonly DependencyProperty OrientationProperty = DependencyProperty.Register(nameof(Orientation), typeof(Orientation), typeof(VectorBox),
+         new PropertyMetadata(Orientation.Horizontal));
 
         public double Multiplier
         {
@@ -39,15 +39,15 @@ namespace Andromeda.Utilities.Controls
             set => SetValue(MultiplierProperty, value);
         }
 
-        public static readonly DependencyProperty MultiplierProperty = DependencyProperty.Register(nameof(Multiplier), typeof(double), typeof(NumberBox),
-            new FrameworkPropertyMetadata(1.0));
+        public static readonly DependencyProperty MultiplierProperty = DependencyProperty.Register(nameof(Multiplier), typeof(double), typeof(VectorBox),
+            new PropertyMetadata(1.0));
         public string X
         {
             get => (string)GetValue(XProperty);
             set => SetValue(XProperty, value);
         }
 
-        public static readonly DependencyProperty XProperty = DependencyProperty.Register(nameof(X), typeof(string), typeof(NumberBox),
+        public static readonly DependencyProperty XProperty = DependencyProperty.Register(nameof(X), typeof(string), typeof(VectorBox),
             new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
         public string Y
         {
@@ -55,7 +55,7 @@ namespace Andromeda.Utilities.Controls
             set => SetValue(YProperty, value);
         }
 
-        public static readonly DependencyProperty YProperty = DependencyProperty.Register(nameof(Y), typeof(string), typeof(NumberBox),
+        public static readonly DependencyProperty YProperty = DependencyProperty.Register(nameof(Y), typeof(string), typeof(VectorBox),
             new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
         public string Z
         {
@@ -63,7 +63,7 @@ namespace Andromeda.Utilities.Controls
             set => SetValue(ZProperty, value);
         }
 
-        public static readonly DependencyProperty ZProperty = DependencyProperty.Register(nameof(Z), typeof(string), typeof(NumberBox),
+        public static readonly DependencyProperty ZProperty = DependencyProperty.Register(nameof(Z), typeof(string), typeof(VectorBox),
             new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
         public string W
         {
@@ -71,7 +71,7 @@ namespace Andromeda.Utilities.Controls
             set => SetValue(WProperty, value);
         }
 
-        public static readonly DependencyProperty WProperty = DependencyProperty.Register(nameof(W), typeof(string), typeof(NumberBox),
+        public static readonly DependencyProperty WProperty = DependencyProperty.Register(nameof(W), typeof(string), typeof(VectorBox),
             new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         static VectorBox()

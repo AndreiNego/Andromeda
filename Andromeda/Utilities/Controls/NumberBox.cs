@@ -56,7 +56,6 @@ namespace Andromeda.Utilities.Controls
             _valueChanged = false;
             e.Handled = true;
 
-            _multiplier = 0.01;
             _mouseXStart = e.GetPosition(this).X;
         }
 
