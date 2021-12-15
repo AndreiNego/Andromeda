@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <assert.h>
 #include <typeinfo>
+#include <memory>
+#include <unordered_map>
 
 //mathlibrary
 #if defined(_WIN64)

@@ -3,20 +3,20 @@
 namespace andromeda::transform {
 
 	namespace {
-		utl::vector<math::Vector3> positions;
-		utl::vector<math::Vector4> rotations;
-		utl::vector<math::Vector3> scales;
+		utl::vector<math::v3> positions;
+		utl::vector<math::v4> rotations;
+		utl::vector<math::v3> scales;
 	}
 	component 
-		create_transform(const init_info& info, game_entity::entity entity)
+		create(init_info info, game_entity::entity entity)
 	{
 		assert(entity.is_valid());
 		const id::id_type entity_index{ id::index(entity.get_id()) };
 		if (positions.size() > entity_index)
 		{
-			rotations[entity_index] = math::Vector4(info.rotation);
-			positions[entity_index] = math::Vector3(info.position);
-			scales[entity_index] = math::Vector3(info.scale);
+			rotations[entity_index] = math::v4(info.rotation);
+			positions[entity_index] = math::v3(info.position);
+			scales[entity_index] = math::v3(info.scale);
 		}
 		else
 		{
@@ -28,24 +28,24 @@ namespace andromeda::transform {
 		return component(transform_id{ (id::id_type)positions.size() - 1 });
 	}
 	void
-		remove_transform(component c)
+		remove(component c)
 	{
 		assert(c.is_valid());
 	}
 
-	math::Vector4
+	math::v4
 		component::rotation() const
 	{
 		assert(is_valid());
 		return rotations[id::index(_id)];
 	}
-	math::Vector3
+	math::v3
 		component::position() const
 	{
 		assert(is_valid());
 		return positions[id::index(_id)];
 	}
-	math::Vector3
+	math::v3
 		component::scale() const
 	{
 		assert(is_valid());
