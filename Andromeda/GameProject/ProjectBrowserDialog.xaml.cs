@@ -20,7 +20,7 @@ namespace Andromeda.GameProject
     /// </summary>
     public partial class ProjectBrowserDialog : Window
     {
-        private readonly CubicEase _easing = new CubicEase() { EasingMode = EasingMode.EaseInOut};
+        private readonly CubicEase _easing = new() { EasingMode = EasingMode.EaseInOut};
         public ProjectBrowserDialog()
         {
             InitializeComponent();

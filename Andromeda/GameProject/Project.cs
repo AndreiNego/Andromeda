@@ -1,4 +1,5 @@
 ﻿using Andromeda.Common;
+using Andromeda.GameDev;
 using Andromeda.Utilities;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,8 @@ namespace Andromeda.GameProject
         public string Path { get; private set; }
 
         public string FullPath => $@"{Path}{Name}{Extension}";
+        public string Solution => $@"{Path}{Name}.sln";
+
 
         [DataMember(Name = "Scenes")]
         private ObservableCollection<Scene> _scenes = new ObservableCollection<Scene>();
@@ -51,13 +54,15 @@ namespace Andromeda.GameProject
 
         public ICommand UndoCommand { get; private set; }
 
-        public ICommand RedoCommand {get; private set;}
+        public ICommand RedoCommand { get; private set; }
 
         public ICommand AddSceneCommand { get; private set; }
 
         public ICommand RemoveSceneCommand { get; private set; }
 
         public ICommand SaveCommand { get; private set; }
+
+        
 
         private void AddSceneInternal(string sceneName)
         {
@@ -80,6 +85,7 @@ namespace Andromeda.GameProject
         
         public void Unload()
         {
+            VisualStudio.CloseVisualStudio();
             UndoRedo.Reset();
         }
         public static void Save(Project project)

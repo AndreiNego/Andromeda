@@ -28,10 +28,11 @@ namespace Andromeda.GameProject
         public string IconFilePath { get; set; }
 
         public string ProjectFilePath { get; set; }
+        public string TemplatePath { get;  set; }
     }
     public class NewProject : ViewModelBase
     {
-        private readonly string _templatePath = @"D:\Development\GameEngine\Andromeda\ProjectTemplates";
+        private readonly string _templatePath = @"D:\Development\GameEngine\Andromeda\Andromeda\Properties\ProjectTemplates\EmptyProject";
         private string _projectName = "NewProject";
         public string ProjectName
         {
@@ -68,7 +69,7 @@ namespace Andromeda.GameProject
 
         private bool _isPathValid;
 
-        public bool isPathValid
+        public bool IsPathValid
         {
             get => _isPathValid;
             set
@@ -76,7 +77,7 @@ namespace Andromeda.GameProject
                 if(_isPathValid != value)
                 {
                     _isPathValid = value;
-                    OnPropertyChanged(nameof(isPathValid));
+                    OnPropertyChanged(nameof(IsPathValid));
                 }
             }
         }
@@ -95,7 +96,7 @@ namespace Andromeda.GameProject
             }
         }
 
-        private ObservableCollection<ProjectTemplate> _projectTemplates = new ObservableCollection<ProjectTemplate>();
+        private readonly ObservableCollection<ProjectTemplate> _projectTemplates = new();
 
         public ReadOnlyObservableCollection<ProjectTemplate> ProjectTemplates
         { get; }
@@ -108,7 +109,7 @@ namespace Andromeda.GameProject
                 path += @"\";
             }
             path += $@"{ProjectName}\";
-            isPathValid = true;
+            IsPathValid = true;
             if (string.IsNullOrWhiteSpace(ProjectName.Trim()))
             {
                 ErrorMsg = "Type in a project name.";
@@ -132,15 +133,15 @@ namespace Andromeda.GameProject
             else
             {
                 ErrorMsg = string.Empty;
-                isPathValid = true;
+                IsPathValid = true;
             }
-            return isPathValid;
+            return IsPathValid;
         }
 
         public string CreateProject(ProjectTemplate template)
         {
             ValidateProjectPath();
-            if (!isPathValid)
+            if (!IsPathValid)
             {
                 return string.Empty;
             }
@@ -170,6 +171,8 @@ namespace Andromeda.GameProject
                 var projectPath = Path.GetFullPath(Path.Combine(path, $"{ProjectName}{Project.Extension}"));
                 File.WriteAllText(projectPath, projectXml);
 
+                CreateMSVCSolution(template, path);
+                  
                 return path;
                 
             }
@@ -180,6 +183,28 @@ namespace Andromeda.GameProject
                 Logger.Log(MessageType.Error, $"Failed to create {ProjectName}");
                 throw;
             }
+
+        }
+        private void CreateMSVCSolution(ProjectTemplate template,string projectPath)
+        {
+            Debug.Assert(File.Exists(Path.Combine(template.TemplatePath, "MSVCSolution")));
+            Debug.Assert(File.Exists(Path.Combine(template.TemplatePath, "MSVCProject")));
+
+            var engineAPIPath = Path.Combine(MainWindow.AndromedaPath, @"Engine\EngineAPI\");
+            Debug.Assert(Directory.Exists(engineAPIPath));
+
+            var _0 = ProjectName;
+            var _1 = "{" + Guid.NewGuid().ToString().ToUpper() + "}";
+            var _2 = engineAPIPath;
+            var _3 = MainWindow.AndromedaPath;
+
+            var solution = File.ReadAllText(Path.Combine(template.TemplatePath, "MSVCSolution"));
+            solution = string.Format(solution, _0, _1, "{" + Guid.NewGuid().ToString().ToUpper()+"}");
+            File.WriteAllText(Path.GetFullPath(Path.Combine(projectPath, $"{_0}.sln")), solution);
+
+            var project = File.ReadAllText(Path.Combine(template.TemplatePath, "MSVCProject"));
+            project = string.Format(project, _0, _1, _2, _3);
+            File.WriteAllText(Path.GetFullPath(Path.Combine(projectPath, $@"GameCode\{_0}.vcxproj")), project);
 
         }
         public NewProject()
@@ -197,6 +222,7 @@ namespace Andromeda.GameProject
                     template.ScreenshotFilePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), "Screenshot.jpg"));
                     template.Screenshot = File.ReadAllBytes(template.ScreenshotFilePath);
                     template.ProjectFilePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), template.ProjectFile));
+                    template.TemplatePath = Path.GetDirectoryName(file);
 
                     _projectTemplates.Add(template);
                
