@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Andromeda.GameProject"
         mc:Ignorable="d" ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
         Title="Andromeda Projects" Height="600" Width="800"
-        Style="{StaticResource AndromedaWindowsStyle}">
+        Style="{StaticResource AndromedaDialogStyle}">
     <Window.Resources>
         <Style TargetType="{x:Type ToggleButton}">
             <Setter Property="FontSize" Value="32"/>

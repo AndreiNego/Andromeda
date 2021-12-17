@@ -13,6 +13,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 
 namespace Andromeda.GameDev
@@ -67,7 +68,7 @@ private:
         {
             InitializeComponent();
             Owner = Application.Current.MainWindow;
-            scriptPath.Text = @"GameCode\";
+            scriptPath.Text = $@"{0}\GameCode\";
         }
         bool Validate()
         {
@@ -87,12 +88,12 @@ private:
             {
                 errorMsg = "Select a valid script folder";
             }
-            else if (path.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) != -1)
+            else if (path.IndexOfAny(System.IO.Path.GetInvalidPathChars()) != -1)
             {
                 errorMsg = "Invalid character(s) used in script path.";
             }
-            else if (!System.IO.Path.GetFullPath(System.IO.Path.Combine(Project.Current.Path, path)).Contains(System.IO.Path.Combine(Project.Current.Path, @"GameCode\"))
-                || File.Exists(System.IO.Path.GetFullPath(System.IO.Path.Combine(Project.Current.Path, path), $"{name}.h")))
+            else if (!Path.GetFullPath(Path.Combine(Project.Current.Path, path)).Contains(Path.Combine(Project.Current.Path, @"GameCode\"))
+                || File.Exists(Path.GetFullPath(Path.Combine(Project.Current.Path, path), $"{name}.h")))
             {
                 errorMsg = "Script must be added to GameCode.";
             }
@@ -116,6 +117,11 @@ private:
         {
             if (!Validate()) return;
             IsEnabled = false;
+            busyAnimation.Opacity = 0;
+            busyAnimation.Visibility = Visibility.Visible;
+            DoubleAnimation fadeIn = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(500)));
+            busyAnimation.BeginAnimation(OpacityProperty, fadeIn);
+
             try
             {
                 var name = scriptName.Text.Trim();
@@ -123,11 +129,23 @@ private:
                 var solution = Project.Current.Solution;
                 var projectName = Project.Current.Name;
                 await Task.Run(() => CreateScript(name, path, solution, projectName));
+
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
                 Logger.Log(MessageType.Error, $"Failed to create the script {scriptName.Text}");
+            }
+            finally
+            {
+                DoubleAnimation fadeOut = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromMilliseconds(200)));
+                fadeOut.Completed += (s, e) =>
+                {
+                    busyAnimation.Opacity = 0;
+                    busyAnimation.Visibility = Visibility.Hidden;
+                    Close();
+                };
+                busyAnimation.BeginAnimation(OpacityProperty, fadeOut);
             }
         }
         private void OnScriptName_TextBox_TextChanged(object sender, TextChangedEventArgs e)

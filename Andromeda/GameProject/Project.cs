@@ -15,6 +15,13 @@ using System.Windows.Input;
 
 namespace Andromeda.GameProject
 {
+    enum BuildConfiguration
+    {
+        Debug,
+        DebugEditor,
+        Release,
+        ReleaseEditor,
+    }
     [DataContract(Name = "Game")]
     class Project : ViewModelBase
     {
@@ -27,6 +34,26 @@ namespace Andromeda.GameProject
         public string FullPath => $@"{Path}{Name}{Extension}";
         public string Solution => $@"{Path}{Name}.sln";
 
+        private static readonly string[] _buildConfigurationNames = new string[] { "Debug","DebugEditor","Release","ReleaseEditor"};
+
+        private int _buildConfig;
+        [DataMember]
+        public int BuildConfig
+        {
+            get => _buildConfig;
+            set
+            {
+                if(_buildConfig != value)
+                {
+                    _buildConfig = value;
+                    OnPropertyChanged(nameof(BuildConfig));
+                }
+            }
+        }
+
+        public BuildConfiguration StandAloneBuildConfig => BuildConfig == 0 ? BuildConfiguration.Debug : BuildConfiguration.Release;
+
+        public BuildConfiguration DllBuildConfig => BuildConfig == 0 ? BuildConfiguration.DebugEditor : BuildConfiguration.ReleaseEditor;
 
         [DataMember(Name = "Scenes")]
         private ObservableCollection<Scene> _scenes = new ObservableCollection<Scene>();
@@ -62,8 +89,9 @@ namespace Andromeda.GameProject
 
         public ICommand SaveCommand { get; private set; }
 
-        
+        public ICommand BuildCommand { get; private set; }
 
+        private static string GetConfigurationName(BuildConfiguration config) => _buildConfigurationNames[(int)config];
         private void AddSceneInternal(string sceneName)
         {
             Debug.Assert(!string.IsNullOrEmpty(sceneName.Trim()));
@@ -93,7 +121,33 @@ namespace Andromeda.GameProject
             Serializer.ToFile(project, project.FullPath);
             Logger.Log(MessageType.Info, $"Saved project to {project.FullPath}");
         }
+
+        private void BuildGameCodeDll(bool showWindow = true)
+        {
+            try
+            {
+                UnloadGameCodeDll();
+                VisualStudio.BuildSolution(this, GetConfigurationName(DllBuildConfig), showWindow);
+                if (VisualStudio.BuildSucceeded)
+                {
+                    LoadGameCodeDll();
+                }
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                throw;
+            }
+        }
         
+        private void UnloadGameCodeDll()
+        {
+
+        }
+        private void LoadGameCodeDll()
+        {
+
+        }
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
@@ -127,10 +181,12 @@ namespace Andromeda.GameProject
                     ));
             }, x => !x.IsActive);
 
-            UndoCommand = new RelayCommand<object>(x => UndoRedo.Undo());
-            RedoCommand = new RelayCommand<object>(x => UndoRedo.Redo());
+            UndoCommand = new RelayCommand<object>(x => UndoRedo.Undo(), x=> UndoRedo.UndoList.Any());
+            RedoCommand = new RelayCommand<object>(x => UndoRedo.Redo(), x => UndoRedo.RedoList.Any());
             SaveCommand = new RelayCommand<object>(x => Save(this));
+            BuildCommand = new RelayCommand<bool>(x => BuildGameCodeDll(x), x=> !VisualStudio.IsDebugging() && VisualStudio.BuildDone);
         }
+
 
         public Project(string name, string path)
         {

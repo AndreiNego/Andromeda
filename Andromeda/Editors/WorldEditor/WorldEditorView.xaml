@@ -6,9 +6,13 @@
              xmlns:local="clr-namespace:Andromeda.Editors"
              xmlns:utl="clr-namespace:Andromeda.Utilities"
              xmlns:ctrl="clr-namespace:Andromeda.Utilities.Controls"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" Focusable="True"
              d:DesignHeight="450" d:DesignWidth="800">
-    
+    <UserControl.Resources>
+        <sys:Boolean x:Key="True">True</sys:Boolean>
+        <sys:Boolean x:Key="False">False</sys:Boolean>
+    </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Command="{Binding UndoCommand}" Key="z" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding RedoCommand}" Key="X" Modifiers="Ctrl"/>
@@ -21,7 +25,15 @@
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
             <Button Content="Undo" Command="{Binding UndoCommand}"/>
-            <Button Content="Redo" Command="{Binding RedoCommand}" Margin="32,0,0,0"/>
+            <Button Content="Redo" Command="{Binding RedoCommand}" Margin="5,0,0,0"/>
+            <Button Content="New Script" Click="OnNewScript_Button_Click" Margin="5,0,0,0"/>
+            <Button x:Name="buildButton" Content="Build" Margin="5,0,0,0"
+                    Command="{Binding BuildCommand}" CommandParameter="{StaticResource True}"/>
+            <ComboBox x:Name="runConfig" VerticalAlignment="Center" Margin="10,0"
+                      Width="72" SelectedIndex="{Binding BuildConfig}">
+                <ComboBoxItem Content="Debug"/>
+                <ComboBoxItem Content="Release"/>
+            </ComboBox>
         </StackPanel>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>

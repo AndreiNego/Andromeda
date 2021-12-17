@@ -1,4 +1,5 @@
-﻿using Andromeda.GameProject;
+﻿using Andromeda.GameDev;
+using Andromeda.GameProject;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -34,5 +35,10 @@ namespace Andromeda.Editors
             ((INotifyCollectionChanged)Project.UndoRedo.UndoList).CollectionChanged += (s, e) => Focus();
         }
 
+        private void OnNewScript_Button_Click(object sender, RoutedEventArgs e)
+        {
+            new NewScriptDialog().ShowDialog();
+            
+        }
     }
 }
