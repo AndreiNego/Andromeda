@@ -68,7 +68,7 @@ private:
         {
             InitializeComponent();
             Owner = Application.Current.MainWindow;
-            scriptPath.Text = $@"{0}\GameCode\";
+            scriptPath.Text = @"GameCode\";
         }
         bool Validate()
         {
@@ -92,10 +92,14 @@ private:
             {
                 errorMsg = "Invalid character(s) used in script path.";
             }
-            else if (!Path.GetFullPath(Path.Combine(Project.Current.Path, path)).Contains(Path.Combine(Project.Current.Path, @"GameCode\"))
-                || File.Exists(Path.GetFullPath(Path.Combine(Project.Current.Path, path), $"{name}.h")))
+            else if (!Path.GetFullPath(Path.Combine(Project.Current.Path, path)).Contains(Path.Combine(Project.Current.Path, @"GameCode\")))
             {
                 errorMsg = "Script must be added to GameCode.";
+            }
+            else if (File.Exists(Path.GetFullPath(Path.Combine(Path.Combine(Project.Current.Path, path), $"{name}.cpp")))
+                || File.Exists(Path.GetFullPath(Path.Combine(Path.Combine(Project.Current.Path, path), $"{name}.h"))))
+            {
+                errorMsg = $"Script with {name} already exists.";
             }
             else
             {

@@ -140,13 +140,25 @@ namespace Andromeda.GameProject
             }
         }
         
-        private void UnloadGameCodeDll()
-        {
-
-        }
         private void LoadGameCodeDll()
         {
-
+            var configName = GetConfigurationName(DllBuildConfig);
+            var dll = $@"{Path}x64\{configName}\{Name}.dll";
+            if (File.Exists(dll) && DllWrappers.EngineAPI.LoadGameCodeDll(dll) != 0)
+            {
+                Logger.Log(MessageType.Info, "Game code DLL loaded successfully");
+            }
+            else
+            {
+                Logger.Log(MessageType.Warning, "Failed to load game code DLL");
+            }
+        }
+        private void UnloadGameCodeDll()
+        {
+            if(DllWrappers.EngineAPI.UnloadGameCodeDll() != 0)
+            {
+                Logger.Log(MessageType.Info, "Game code DLL unloaded");
+            }
         }
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
@@ -157,6 +169,8 @@ namespace Andromeda.GameProject
                 OnPropertyChanged(nameof(Scenes));
             }
             ActiveScene = Scenes.FirstOrDefault<Scene>(x => x.IsActive);
+
+            BuildGameCodeDll(false);
 
             AddSceneCommand = new RelayCommand<object>(x =>
            {
