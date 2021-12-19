@@ -23,7 +23,7 @@ namespace Andromeda
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static string AndromedaPath { get; private set; } = @"D:\Development\GameEngine\Andromeda\";
+        public static string AndromedaPath { get; private set; } 
         public MainWindow()
         {
             InitializeComponent();

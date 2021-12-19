@@ -1,4 +1,5 @@
 ﻿using Andromeda.Common;
+using Andromeda.DllWrappers;
 using Andromeda.GameDev;
 using Andromeda.Utilities;
 using System;
@@ -54,6 +55,21 @@ namespace Andromeda.GameProject
         public BuildConfiguration StandAloneBuildConfig => BuildConfig == 0 ? BuildConfiguration.Debug : BuildConfiguration.Release;
 
         public BuildConfiguration DllBuildConfig => BuildConfig == 0 ? BuildConfiguration.DebugEditor : BuildConfiguration.ReleaseEditor;
+
+        private string[] _availableScripts;
+
+        public string[] AvailableScripts
+        {
+            get => _availableScripts;
+            set
+            {
+                if (_availableScripts != value)
+                {
+                    _availableScripts = value;
+                    OnPropertyChanged(nameof(AvailableScripts));
+                }
+            }
+        }
 
         [DataMember(Name = "Scenes")]
         private ObservableCollection<Scene> _scenes = new ObservableCollection<Scene>();
@@ -122,12 +138,12 @@ namespace Andromeda.GameProject
             Logger.Log(MessageType.Info, $"Saved project to {project.FullPath}");
         }
 
-        private void BuildGameCodeDll(bool showWindow = true)
+        private async Task BuildGameCodeDll(bool showWindow = true)
         {
             try
             {
                 UnloadGameCodeDll();
-                VisualStudio.BuildSolution(this, GetConfigurationName(DllBuildConfig), showWindow);
+                await Task.Run(() => VisualStudio.BuildSolution(this, GetConfigurationName(DllBuildConfig), showWindow));
                 if (VisualStudio.BuildSucceeded)
                 {
                     LoadGameCodeDll();
@@ -144,8 +160,10 @@ namespace Andromeda.GameProject
         {
             var configName = GetConfigurationName(DllBuildConfig);
             var dll = $@"{Path}x64\{configName}\{Name}.dll";
-            if (File.Exists(dll) && DllWrappers.EngineAPI.LoadGameCodeDll(dll) != 0)
+            AvailableScripts = null;
+            if (File.Exists(dll) && EngineAPI.LoadGameCodeDll(dll) != 0)
             {
+                AvailableScripts = EngineAPI.GetScriptNames();
                 Logger.Log(MessageType.Info, "Game code DLL loaded successfully");
             }
             else
@@ -155,34 +173,50 @@ namespace Andromeda.GameProject
         }
         private void UnloadGameCodeDll()
         {
-            if(DllWrappers.EngineAPI.UnloadGameCodeDll() != 0)
+            if(EngineAPI.UnloadGameCodeDll() != 0)
             {
                 Logger.Log(MessageType.Info, "Game code DLL unloaded");
+                AvailableScripts = null;
             }
         }
         [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
+        private async void OnDeserialized(StreamingContext context)
         {
-            if(_scenes != null)
+            if (_scenes != null)
             {
                 Scenes = new ReadOnlyObservableCollection<Scene>(_scenes);
                 OnPropertyChanged(nameof(Scenes));
             }
             ActiveScene = Scenes.FirstOrDefault<Scene>(x => x.IsActive);
 
-            BuildGameCodeDll(false);
+            await BuildGameCodeDll(false);
 
+            SetCommands();
+
+        }
+            public Project(string name, string path)
+        {
+            Name = name;
+            Path = path;
+
+            OnDeserialized(new StreamingContext());
+
+        }
+    
+
+        private void SetCommands()
+        {
             AddSceneCommand = new RelayCommand<object>(x =>
-           {
-               AddSceneInternal($"New Scene { _scenes.Count}");
-               var newScene = _scenes.Last();
-               var sceneIndex = _scenes.Count - 1;
-               UndoRedo.Add(new UndoRedoAction(
-                   () => RemoveSceneInternal(newScene),
-                   () => _scenes.Insert(sceneIndex, newScene),
-                   $"Add {newScene.Name}"
-                   ));
-           });
+            {
+                AddSceneInternal($"New Scene { _scenes.Count}");
+                var newScene = _scenes.Last();
+                var sceneIndex = _scenes.Count - 1;
+                UndoRedo.Add(new UndoRedoAction(
+                    () => RemoveSceneInternal(newScene),
+                    () => _scenes.Insert(sceneIndex, newScene),
+                    $"Add {newScene.Name}"
+                    ));
+            });
 
             RemoveSceneCommand = new RelayCommand<Scene>(x =>
             {
@@ -195,20 +229,17 @@ namespace Andromeda.GameProject
                     ));
             }, x => !x.IsActive);
 
-            UndoCommand = new RelayCommand<object>(x => UndoRedo.Undo(), x=> UndoRedo.UndoList.Any());
+            UndoCommand = new RelayCommand<object>(x => UndoRedo.Undo(), x => UndoRedo.UndoList.Any());
             RedoCommand = new RelayCommand<object>(x => UndoRedo.Redo(), x => UndoRedo.RedoList.Any());
             SaveCommand = new RelayCommand<object>(x => Save(this));
-            BuildCommand = new RelayCommand<bool>(x => BuildGameCodeDll(x), x=> !VisualStudio.IsDebugging() && VisualStudio.BuildDone);
-        }
+            BuildCommand = new RelayCommand<bool>(async x => await BuildGameCodeDll(x), x => !VisualStudio.IsDebugging() && VisualStudio.BuildDone);
 
-
-        public Project(string name, string path)
-        {
-            Name = name;
-            Path = path;
-
-            OnDeserialized(new StreamingContext());
-
+            OnPropertyChanged(nameof(AddSceneCommand));
+            OnPropertyChanged(nameof(RemoveSceneCommand));
+            OnPropertyChanged(nameof(UndoCommand));
+            OnPropertyChanged(nameof(RedoCommand));
+            OnPropertyChanged(nameof(SaveCommand));
+            OnPropertyChanged(nameof(BuildCommand));
         }
     }
 }

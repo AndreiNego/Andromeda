@@ -18,11 +18,17 @@ namespace Andromeda.EngineAPIStructs
         public Vector3 Scale = new(1,1,1); 
     
     }
+    [StructLayout(LayoutKind.Sequential)]
+    class ScriptComponent
+    {
+        public IntPtr ScriptCreator;
+    }
 
     [StructLayout(LayoutKind.Sequential)]
 class GameEntityDescriptor
     {
         public TransformComponent Transform = new();
+        public ScriptComponent Script = new();
     }
 }
 
@@ -35,11 +41,16 @@ namespace Andromeda.DllWrappers
         public static extern int LoadGameCodeDll(string dllPath);
         [DllImport(_engineDll)]
         public static extern int UnloadGameCodeDll();
+        [DllImport(_engineDll)]
+        public static extern IntPtr GetScriptCreator(string name);
+        [DllImport(_engineDll)]
+        [return: MarshalAs(UnmanagedType.SafeArray)]
+        public static extern string[] GetScriptNames();
         internal static class EntityAPI
         {
             [DllImport(_engineDll)]
             private static extern int CreateGameEntity(GameEntityDescriptor desc);
-            public static int CreateGameEntity(GameEntity entity)
+            public static int CreateGameEntity(GameEntity entity) //game entity components
             {
                 GameEntityDescriptor desc = new();
                 //transform
@@ -48,6 +59,10 @@ namespace Andromeda.DllWrappers
                     desc.Transform.Position = c.Position;
                     desc.Transform.Rotation = c.Rotation;
                     desc.Transform.Scale = c.Scale;
+                }
+                // script
+                {
+                  //  var c = entity.GetComponent<Script>();
                 }
                 return CreateGameEntity(desc);
             }

@@ -9,15 +9,23 @@ namespace andromeda::script {
 		utl::vector<id::generation_type> generations;
 		utl::vector<script_id> free_ids;
 
-		using script_registery = std::unordered_map<size_t, detail::script_creator>;
+using script_registry = std::unordered_map<size_t, detail::script_creator>;
+script_registry&
+registry() 
+{
+	//NOTE: this static variable is in a function because of the initialization order of static data.
+	static script_registry reg;
+	return reg;
+}
+#ifdef  USE_WITH_EDITOR
+utl::vector<std::string>&
+script_names() 
+{
+	static utl::vector<std::string> names;
+	return names;
+}
+#endif //  USE_WITH_EDITOR
 
-		script_registery&
-			registery() 
-		{
-			//NOTE: this static variable is in a function because of the initialization order of static data.
-			static script_registery reg;
-			return reg;
-		}
 
 		bool
 			exists(script_id id) {
@@ -34,10 +42,27 @@ namespace andromeda::script {
 	u8
 		register_script(size_t tag, script_creator func) 
 	{
-		bool result{ registery().insert(script_registery::value_type{tag, func}).second };
+		bool result{ registry().insert(script_registry::value_type{tag, func}).second };
 		assert(result);
 		return result;
 	}
+	script_creator
+		get_script_creator(size_t tag) 
+	{
+		auto script = andromeda::script::registry().find(tag);
+		assert(script != andromeda::script::registry().end() && script->first == tag);
+		return script->second;
+	}
+
+#ifdef USE_WITH_EDITOR
+	u8
+		add_script_name(const char* name)
+	{
+		script_names().emplace_back(name);
+		return true;
+	}
+#endif // USE_WITH_EDITOR
+
 	} // namespace detail
 
 	component
@@ -78,3 +103,20 @@ namespace andromeda::script {
 		id_mapping[id::index(id)] = id::invalid_id;
 	}
 }
+#ifdef USE_WITH_EDITOR
+#include <atlsafe.h>
+
+extern "C" __declspec(dllexport)
+LPSAFEARRAY
+get_script_names()
+{
+	const u32 size{ (u32)andromeda::script::script_names().size() };
+	if (!size) return nullptr;
+	CComSafeArray<BSTR> names(size);
+	for (u32 i{ 0 }; i < size; ++i) 
+	{
+		names.SetAt(i, A2BSTR_EX(andromeda::script::script_names()[i].c_str()), false);
+	}
+	return names.Detach();
+}
+#endif // USE_WITH_EDITOR
