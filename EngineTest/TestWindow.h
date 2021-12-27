@@ -36,6 +36,7 @@ LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		}
 		break;
 	}
+	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
 class engine_test : public test
@@ -46,9 +47,9 @@ public:
 		platform::window_init_info info[]
 		{
 			{&win_proc, nullptr, L"Test Window 1", 100, 100, 400, 800},
-			{&win_proc, nullptr, L"Test Window 2", 100, 100, 400, 800},
-			{&win_proc, nullptr, L"Test Window 3", 100, 100, 400, 800},
-			{&win_proc, nullptr, L"Test Window 4", 100, 100, 400, 800}
+			{&win_proc, nullptr, L"Test Window 2", 200, 100, 400, 800},
+			{&win_proc, nullptr, L"Test Window 3", 100, 200, 400, 800},
+			{&win_proc, nullptr, L"Test Window 4", 100, 100, 600, 800}
 		};
 		static_assert(_countof(info) == _countof(_windows));
 		for (u32 i{ 0 }; i < _countof(_windows); ++i)
