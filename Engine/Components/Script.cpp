@@ -7,23 +7,23 @@ namespace andromeda::script {
 		utl::vector<detail::script_ptr> entity_scripts;
 		utl::vector<id::id_type> id_mapping;
 		utl::vector<id::generation_type> generations;
-		utl::vector<script_id> free_ids;
+		utl::deque<script_id> free_ids;
 
-using script_registry = std::unordered_map<size_t, detail::script_creator>;
-script_registry&
-registry() 
-{
-	//NOTE: this static variable is in a function because of the initialization order of static data.
-	static script_registry reg;
-	return reg;
-}
+		using script_registry = std::unordered_map<size_t, detail::script_creator>;
+		script_registry&
+			registry()
+		{
+			//NOTE: this static variable is in a function because of the initialization order of static data.
+			static script_registry reg;
+			return reg;
+		}
 #ifdef  USE_WITH_EDITOR
-utl::vector<std::string>&
-script_names() 
-{
-	static utl::vector<std::string> names;
-	return names;
-}
+		utl::vector<std::string>&
+			script_names()
+		{
+			static utl::vector<std::string> names;
+			return names;
+		}
 #endif //  USE_WITH_EDITOR
 
 
@@ -39,34 +39,35 @@ script_names()
 
 	namespace detail
 	{
-	u8
-		register_script(size_t tag, script_creator func) 
-	{
-		bool result{ registry().insert(script_registry::value_type{tag, func}).second };
-		assert(result);
-		return result;
-	}
-	script_creator
-		get_script_creator(size_t tag) 
-	{
-		auto script = andromeda::script::registry().find(tag);
-		assert(script != andromeda::script::registry().end() && script->first == tag);
-		return script->second;
-	}
+		u8
+			register_script(size_t tag, script_creator func)
+		{
+			bool result{ registry().insert(script_registry::value_type{tag, func}).second };
+			assert(result);
+			return result;
+		}
+		script_creator
+			get_script_creator(size_t tag)
+		{
+			auto script = andromeda::script::registry().find(tag);
+			assert(script != andromeda::script::registry().end() && script->first == tag);
+			return script->second;
+		}
 
 #ifdef USE_WITH_EDITOR
-	u8
-		add_script_name(const char* name)
-	{
-		script_names().emplace_back(name);
-		return true;
-	}
+		u8
+			add_script_name(const char* name)
+		{
+			script_names().emplace_back(name);
+			return true;
+		}
 #endif // USE_WITH_EDITOR
 
 	} // namespace detail
 
 	component
-		create(init_info info, game_entity::entity entity) {
+		create(init_info info, game_entity::entity entity)
+	{
 		assert(entity.is_valid());
 		assert(info.script_creator);
 
@@ -75,7 +76,7 @@ script_names()
 		{
 			id = free_ids.front();
 			assert(!exists(id));
-			free_ids.pop_back();
+			free_ids.pop_front();
 			id = script_id{ id::new_generation(id) };
 			++generations[id::index(id)];
 		}
@@ -92,7 +93,7 @@ script_names()
 		id_mapping[id::index(id)] = index;
 		return component{};
 	}
-	void remove(component c) 
+	void remove(component c)
 	{
 		assert(c.is_valid() && exists(c.get_id()));
 		const script_id id{ c.get_id() };
@@ -102,7 +103,16 @@ script_names()
 		id_mapping[id::index(last_id)] = index;
 		id_mapping[id::index(id)] = id::invalid_id;
 	}
-}
+
+
+	void
+		update(float dt)
+	{
+		for (auto& ptr : entity_scripts) {
+			ptr->update(dt);
+		}
+	}
+} //namespace script
 #ifdef USE_WITH_EDITOR
 #include <atlsafe.h>
 

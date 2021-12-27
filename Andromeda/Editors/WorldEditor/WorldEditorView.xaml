@@ -17,6 +17,10 @@
         <KeyBinding Command="{Binding UndoCommand}" Key="z" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding RedoCommand}" Key="X" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding SaveCommand}" Key="S" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding Build}" CommandParameter="{StaticResource True}" Key="F7" />
+        <KeyBinding Command="{Binding DebugStartCommand}" Key="F5"/>
+        <KeyBinding Command="{Binding DebugStartWithoutDebuggingCommand}" Key="F5" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding DebugStopCommand}" Key="F5" Modifiers="Shift"/>
     </UserControl.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -35,10 +39,10 @@
                 <ComboBoxItem Content="Release"/>
             </ComboBox>
         </StackPanel>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
@@ -62,9 +66,8 @@
                               VerticalAlignment="Top" Background="Transparent"/>
                 <Grid Grid.Row="1" Margin="0,5,0,0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition>
-
-                        </ColumnDefinition>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <utl:UndoRedoView DataContext="{Binding UndoRedo}" Grid.Column="0"
                                       Background="{StaticResource Editor.Window.GrayBrush2}"/>
@@ -78,7 +81,7 @@
             </Grid>
             <GridSplitter Grid.Column="1"  Width="5" HorizontalAlignment="Left" 
                           VerticalAlignment="Stretch" Background="Transparent"/>
-            <Grid Grid.Column="1" Margin="5,0,0,0">
+            <Grid Grid.Column="1" Margin="5,0,0,0" MinWidth="240">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition/>

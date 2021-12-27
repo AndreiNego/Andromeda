@@ -1,4 +1,5 @@
 ﻿using Andromeda.Common;
+using Andromeda.Components;
 using Andromeda.DllWrappers;
 using Andromeda.GameDev;
 using Andromeda.Utilities;
@@ -106,6 +107,10 @@ namespace Andromeda.GameProject
         public ICommand SaveCommand { get; private set; }
 
         public ICommand BuildCommand { get; private set; }
+        public ICommand DebugStartCommand { get; private set; }
+        public ICommand DebugStopCommand { get; private set; }
+        public ICommand DebugStartWithoutDebuggingCommand { get; private set; }
+
 
         private static string GetConfigurationName(BuildConfiguration config) => _buildConfigurationNames[(int)config];
         private void AddSceneInternal(string sceneName)
@@ -137,6 +142,38 @@ namespace Andromeda.GameProject
             Serializer.ToFile(project, project.FullPath);
             Logger.Log(MessageType.Info, $"Saved project to {project.FullPath}");
         }
+        private void SaveToBinary()
+        {
+            var configName = GetConfigurationName(StandAloneBuildConfig);
+            var bin = $@"{Path}x64\{configName}\game.bin";
+
+            using (var bw = new BinaryWriter(File.Open(bin, FileMode.Create, FileAccess.Write)))
+            {
+                bw.Write(ActiveScene.GameEntities.Count);
+                foreach(var entity in ActiveScene.GameEntities)
+                {
+                    bw.Write(0); //entity type reserved for later
+                    bw.Write(entity.Components.Count);
+                    foreach(var component in entity.Components)
+                    {
+                        bw.Write((int)component.ToEnumType());
+                        component.WriteToBinary(bw);
+                    }
+                }
+            }
+        }
+        private async Task RunGame(bool debug)
+        {
+            var configName = GetConfigurationName(StandAloneBuildConfig);
+            await Task.Run(() => VisualStudio.Run(this, configName, debug));
+            if (VisualStudio.BuildSucceeded)
+            {
+                SaveToBinary();
+                await Task.Run(() => VisualStudio.Run(this, configName, debug));
+            }
+        }
+
+        private async Task StopGame() => await Task.Run(() => VisualStudio.Stop());
 
         private async Task BuildGameCodeDll(bool showWindow = true)
         {
@@ -164,6 +201,7 @@ namespace Andromeda.GameProject
             if (File.Exists(dll) && EngineAPI.LoadGameCodeDll(dll) != 0)
             {
                 AvailableScripts = EngineAPI.GetScriptNames();
+                ActiveScene.GameEntities.Where(x => x.GetComponent<Script>() != null).ToList().ForEach(x => x.IsActive = true);
                 Logger.Log(MessageType.Info, "Game code DLL loaded successfully");
             }
             else
@@ -173,6 +211,7 @@ namespace Andromeda.GameProject
         }
         private void UnloadGameCodeDll()
         {
+            ActiveScene.GameEntities.Where(x => x.GetComponent<Script>() != null).ToList().ForEach(x => x.IsActive = false);
             if(EngineAPI.UnloadGameCodeDll() != 0)
             {
                 Logger.Log(MessageType.Info, "Game code DLL unloaded");
@@ -188,6 +227,7 @@ namespace Andromeda.GameProject
                 OnPropertyChanged(nameof(Scenes));
             }
             ActiveScene = Scenes.FirstOrDefault<Scene>(x => x.IsActive);
+            Debug.Assert(ActiveScene != null);
 
             await BuildGameCodeDll(false);
 
@@ -233,6 +273,9 @@ namespace Andromeda.GameProject
             RedoCommand = new RelayCommand<object>(x => UndoRedo.Redo(), x => UndoRedo.RedoList.Any());
             SaveCommand = new RelayCommand<object>(x => Save(this));
             BuildCommand = new RelayCommand<bool>(async x => await BuildGameCodeDll(x), x => !VisualStudio.IsDebugging() && VisualStudio.BuildDone);
+            DebugStartCommand = new RelayCommand<object>(async x => await RunGame(true), x => !VisualStudio.IsDebugging() && VisualStudio.BuildDone);
+            DebugStartWithoutDebuggingCommand = new RelayCommand<object>(async x => await RunGame(false), x => !VisualStudio.IsDebugging() && VisualStudio.BuildDone);
+            DebugStopCommand = new RelayCommand<object>(async x => await StopGame(), x => VisualStudio.IsDebugging() && VisualStudio.BuildDone);
 
             OnPropertyChanged(nameof(AddSceneCommand));
             OnPropertyChanged(nameof(RemoveSceneCommand));
@@ -240,6 +283,9 @@ namespace Andromeda.GameProject
             OnPropertyChanged(nameof(RedoCommand));
             OnPropertyChanged(nameof(SaveCommand));
             OnPropertyChanged(nameof(BuildCommand));
+            OnPropertyChanged(nameof(DebugStartCommand));
+            OnPropertyChanged(nameof(DebugStartWithoutDebuggingCommand));
+            OnPropertyChanged(nameof(DebugStopCommand));
         }
     }
 }

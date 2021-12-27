@@ -9,9 +9,9 @@ using u16 = uint16_t;
 using u8 = uint8_t;
 
 //signed integer
-using s64 = int8_t;
-using s32 = int8_t;
-using s16 = int8_t;
+using s64 = int64_t;
+using s32 = int32_t;
+using s16 = int16_t;
 using s8 = int8_t;
 
 //

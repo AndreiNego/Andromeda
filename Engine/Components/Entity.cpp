@@ -54,7 +54,7 @@ namespace andromeda::game_entity {
 			}
 	}
 	void remove(entity_id id) {
-		const id::id_type index{ id::index(id) };
+		/*		const id::id_type index{ id::index(id) };
 		assert(is_alive(id));
 
 		if (scripts[index].is_valid())
@@ -64,7 +64,7 @@ namespace andromeda::game_entity {
 		}
 		transform::remove(transforms[index]);
 		transforms[index] = {};
-		free_ids.push_back(id);
+		free_ids.push_back(id);*/
 		
 	}
 	bool is_alive(entity_id id) 
@@ -72,7 +72,6 @@ namespace andromeda::game_entity {
 		assert(id::is_valid(id));
 		const id::id_type index{ id::index(id) };
 		assert(index < generations.size());
-		assert(generations[index] == id::generation(id));
 		return (generations[index] == id::generation(id) && transforms[index].is_valid());
 	}
 

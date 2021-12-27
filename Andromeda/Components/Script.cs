@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
+using System.IO;
 
 namespace Andromeda.Components
 {
@@ -25,7 +26,14 @@ namespace Andromeda.Components
             }
         }
         public override IMSComponent GetMultiselectionComponent(MSEntity msEntity) => new MSScript(msEntity);
-        
+
+        public override void WriteToBinary(BinaryWriter bw)
+        {
+            var nameBytes = Encoding.UTF8.GetBytes(Name);
+            bw.Write(nameBytes.Length);
+            bw.Write(nameBytes);
+        }
+
         public Script(GameEntity owner) : base(owner) { }
     }
 

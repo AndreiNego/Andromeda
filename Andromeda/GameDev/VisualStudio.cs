@@ -151,18 +151,18 @@ namespace Andromeda.GameDev
         public static bool IsDebugging()
         {
             bool result = false;
-
-            for (int i = 0; i < 3; ++i)
+            bool tryAgain = true;
+            for (int i = 0; i < 3 && tryAgain; ++i)
             {
                 try
                 {
                     result = _vsInstance != null && (_vsInstance.Debugger.CurrentProgram != null || _vsInstance.Debugger.CurrentMode == EnvDTE.dbgDebugMode.dbgRunMode);
-                    break;
+                    tryAgain = false;
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex.Message);
-                    if (!result) System.Threading.Thread.Sleep(1000);
+                    System.Threading.Thread.Sleep(1000);
                 }
             }
             return result;
@@ -177,7 +177,7 @@ namespace Andromeda.GameDev
             }
             OpenVisualStudio(project.Solution);
             BuildDone = BuildSucceeded = false;
-            for (int i = 0; i < 3; ++i)
+            for (int i = 0; i < 3 && !BuildDone; ++i)
             {
                 try
                 {
@@ -208,6 +208,20 @@ namespace Andromeda.GameDev
             }
         }
 
+        public static void Run(Project project, string configName, bool debug)
+        {
+            if(_vsInstance != null && !IsDebugging() && BuildDone && BuildSucceeded)
+            {
+                _vsInstance.ExecuteCommand(debug ? "Debug.Start" : "Debug.StartWithoutDebugging");
+            }
+        }
+        public static void Stop()
+        {
+            if(_vsInstance != null && IsDebugging())
+            {
+                _vsInstance.ExecuteCommand("Debug.StopDebugging");
+            }
+        }
       
     }
 }

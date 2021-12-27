@@ -7,6 +7,8 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Andromeda.GameProject;
+using Andromeda.Utilities;
 
 namespace Andromeda.EngineAPIStructs 
 {
@@ -53,7 +55,7 @@ namespace Andromeda.DllWrappers
             public static int CreateGameEntity(GameEntity entity) //game entity components
             {
                 GameEntityDescriptor desc = new();
-                //transform
+                //transform 
                 {
                     var c = entity.GetComponent<Transform>();
                     desc.Transform.Position = c.Position;
@@ -62,7 +64,21 @@ namespace Andromeda.DllWrappers
                 }
                 // script
                 {
-                  //  var c = entity.GetComponent<Script>();
+                    // NOTE: here we also check if current project is not null, so we can tell whether the game code DLL
+                    //      has been loaded or not. This way, creation of entities with a script component is deferred
+                    //      until the DLL has been loaded. 
+                    var c = entity.GetComponent<Script>();
+                    if(c != null && Project.Current != null)
+                    {
+                        if(Project.Current.AvailableScripts.Contains(c.Name))
+                        {
+                            desc.Script.ScriptCreator = GetScriptCreator(c.Name);
+                        }
+                        else
+                        {
+                            Logger.Log(MessageType.Error, $"Unable to find scrip with name {c.Name}. Game entity will be created without script component!");
+                        }
+                    }
                 }
                 return CreateGameEntity(desc);
             }
