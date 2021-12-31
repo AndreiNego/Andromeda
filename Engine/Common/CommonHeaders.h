@@ -1,4 +1,6 @@
 #pragma once
+
+#pragma warning(disable: 4530)
 //c++ headers
 #include <stdint.h>
 #include <assert.h>
@@ -12,6 +14,14 @@
 #endif
 
 //common headers
+#include "..\Utilities\Math.h"
 #include "..\Utilities\Utilities.h"
 #include "..\Utilities\MathTypes.h"
 #include "PrimitiveTypes.h"
+#include "Id.h"
+
+#ifdef _DEBUG
+#define DEBUG_OP(x) x
+#else
+#define DEBUG_OP(x) (void(0))
+#endif

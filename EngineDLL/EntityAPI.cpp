@@ -23,13 +23,14 @@ namespace {
 			XMVECTOR quat{ XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3A(&rot)) };
 			XMFLOAT4A rot_quat{};
 			XMStoreFloat4A(&rot_quat, quat);
-			memcpy(&info.rotation[0], &rot_quat.x, sizeof(f32) * _countof(info.rotation));
+			memcpy(&info.rotation[0], &rot_quat.x, sizeof(info.rotation));
 			return info;
 		}
 	};
 struct script_component 
 {
 	script::detail::script_creator script_creator;
+
 	script::init_info to_init_info() {
 		script::init_info info{};
 		info.script_creator = script_creator;

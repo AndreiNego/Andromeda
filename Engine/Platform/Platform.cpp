@@ -111,12 +111,20 @@ namespace andromeda::platform {
 			{
 				window_info& info{ get_from_id(id) };
 				
-				// NOTE: we also resize while in fullscreen mode to support resolution changes by user.
-				RECT& area{ info.is_fullscreen ? info.fullscreen_area : info.client_area };
-				area.bottom = area.top + height;
-				area.right = area.left + width;
+				if (info.style & WS_CHILD) 
+				{
+					GetClientRect(info.hwnd, &info.client_area);
+				}
+				else
+				{
 
-				resize_window(info, area);
+					// NOTE: we also resize while in fullscreen mode to support resolution changes by user.
+					RECT& area{ info.is_fullscreen ? info.fullscreen_area : info.client_area };
+					area.bottom = area.top + height;
+					area.right = area.left + width;
+
+					resize_window(info, area);
+				}
 			}
 			void
 				set_window_fullscreen(window_id id, bool is_fullscreen) {
@@ -131,13 +139,13 @@ namespace andromeda::platform {
 						GetWindowRect(info.hwnd, &rect);
 						info.top_left.x = rect.left;
 						info.top_left.y = rect.top;
-						info.style = 0;
-						SetWindowLongPtr(info.hwnd, GWL_STYLE, info.style);
+						SetWindowLongPtr(info.hwnd, GWL_STYLE, 0);
 						ShowWindow(info.hwnd, SW_MAXIMIZE);
 					}
 					else
 					{
 						info.style = WS_VISIBLE | WS_OVERLAPPEDWINDOW;
+						SetWindowLongPtr(info.hwnd, GWL_STYLE, info.style);
 						resize_window(info, info.client_area);
 						ShowWindow(info.hwnd, SW_SHOWNORMAL);
 					}
@@ -203,17 +211,20 @@ namespace andromeda::platform {
 		RegisterClassEx(&wc);
 
 		window_info info{};
-		RECT rc{ info.client_area };
+		info.client_area.right = (init_info && init_info->width) ? info.client_area.left + init_info->width : info.client_area.right;
+		info.client_area.bottom = (init_info && init_info->height) ? info.client_area.top + init_info->height : info.client_area.bottom;
+		info.style |= parent ? WS_CHILD : WS_OVERLAPPEDWINDOW;
 
-		AdjustWindowRect(&rc, info.style, FALSE);
+		RECT rect{ info.client_area };
+
+		AdjustWindowRect(&rect, info.style, FALSE);
 
 		const wchar_t* caption{ (init_info && init_info->caption) ? init_info->caption : L"Andromeda Game" };
-		const s32 left{ (init_info && init_info->left) ? init_info->left : info.client_area.left };
-		const s32 top{ (init_info && init_info->top) ? init_info->top : info.client_area.top };
-		const s32 width{ (init_info && init_info->width) ? init_info->width : rc.right-rc.left };
-		const s32 height{ (init_info && init_info->height) ? init_info->height : rc.bottom-rc.top};
+		const s32 left{ init_info ? init_info->left : info.top_left.x };
+		const s32 top{ init_info ? init_info->top : info.top_left.y };
+		const s32 width{ rect.right - rect.left };
+		const s32 height{ rect.bottom - rect.top};
 
-		info.style |= parent ? WS_CHILD : WS_OVERLAPPEDWINDOW;
 
 		//Create an instance of the window class
 		info.hwnd = CreateWindowExW(
@@ -255,7 +266,8 @@ namespace andromeda::platform {
 		DestroyWindow(info.hwnd);
 		remove_from_windows(id);
 	}
-#elif
+
+#else
 #error "must implement at least one platform"
 #endif // _WIN64
 
@@ -287,7 +299,7 @@ window::set_caption(const wchar_t* caption) const
 	set_window_caption(_id, caption);
 }
 
-const math::u32v4
+math::u32v4
 window::size() const
 {
 	assert(is_valid());
@@ -301,14 +313,14 @@ window::resize(u32 width, u32 height) const
 	resize_window(_id, width, height);
 }
 
-const u32
+u32
 window::width() const
 {
 	math::u32v4 s{ size() };
 	return s.z - s.x;
 }
 
-const u32
+u32
 window::height() const
 {
 	math::u32v4 s{ size() };
