@@ -7,7 +7,7 @@ namespace andromeda::tools {
 		void recalculate_normals(mesh& m)
 		{
 			const u32 num_indices{ (u32)m.raw_indices.size() };
-			m.normals.reserve(num_indices);
+			m.normals.resize(num_indices);
 
 			for (u32 i{ 0 }; i < num_indices; ++i) 
 			{
@@ -183,6 +183,7 @@ namespace andromeda::tools {
 			const u64 size{
 				su32 + m.name.size() +		//mesh name length and room for mesh name string
 				su32 +						//mesh id
+				su32 +						//vertex size
 				su32 +						//number of vertices
 				su32 +						//index size(16 bit or 32 bit)
 				su32 +						//number of indices
@@ -299,6 +300,7 @@ namespace andromeda::tools {
 		memcpy(&buffer[at], &s, su32); at += su32;
 		memcpy(&buffer[at], scene.name.c_str(), s); at += s;
 		//number of LODs
+		s = (u32)scene.lod_groups.size();
 		memcpy(&buffer[at], &s, su32); at += su32;
 
 		for (auto& lod : scene.lod_groups)

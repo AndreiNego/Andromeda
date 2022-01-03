@@ -11,13 +11,24 @@ namespace Andromeda.Utilities.Controls
 {
     [TemplatePart(Name ="PART_textblock", Type =typeof(TextBlock))]
     [TemplatePart(Name = "PART_textbox", Type = typeof(TextBox))]
-    public class NumberBox : Control
+    class NumberBox : Control
     {
         private double _originalValue;
         private double _mouseXStart;
         private double _multiplier;
         private bool _captured = false;
-        private bool _valueChanged = true;
+        private bool _valueChanged = false;
+
+        public event RoutedEventHandler ValueChanged
+        {
+            add => AddHandler(ValueChangedEvent, value); 
+            remove => RemoveHandler(ValueChangedEvent, value); 
+        }
+
+        public static readonly RoutedEvent ValueChangedEvent =
+            EventManager.RegisterRoutedEvent(nameof(ValueChanged), RoutingStrategy.Bubble,
+                typeof(RoutedEventHandler), typeof(NumberBox));
+
         public double Multiplier
         {
             get => (double)GetValue(MultiplierProperty);
@@ -25,7 +36,7 @@ namespace Andromeda.Utilities.Controls
         }
 
         public static readonly DependencyProperty MultiplierProperty = DependencyProperty.Register(nameof(Multiplier), typeof(double), typeof(NumberBox),
-            new FrameworkPropertyMetadata(1.0));
+            new PropertyMetadata(1.0));
 
         public string Value {
             get => (string)GetValue(ValueProperty);
@@ -33,7 +44,14 @@ namespace Andromeda.Utilities.Controls
         }
 
         public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(string), typeof(NumberBox),
-            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+                new PropertyChangedCallback(OnValueChanged)));
+
+        public static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as NumberBox).RaiseEvent(new RoutedEventArgs(ValueChangedEvent));
+        }
+
 
         public override void OnApplyTemplate()
         {
@@ -87,7 +105,7 @@ namespace Andromeda.Utilities.Controls
                     else _multiplier = 0.01;
 
                     var newValue = _originalValue + (d * _multiplier * Multiplier);
-                    Value = newValue.ToString("0.#####");
+                    Value = newValue.ToString("G5");
                     _valueChanged = true;
                 }
             }

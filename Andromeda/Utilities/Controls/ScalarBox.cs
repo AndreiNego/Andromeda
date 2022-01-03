@@ -9,10 +9,10 @@ namespace Andromeda.Utilities.Controls
 {
     class ScalarBox : NumberBox
     {
-        static ScalarBox()
+         static ScalarBox()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(NumberBox),
-                new FrameworkPropertyMetadata(typeof(NumberBox)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(ScalarBox),
+                new FrameworkPropertyMetadata(typeof(ScalarBox)));
         }
     }
 }

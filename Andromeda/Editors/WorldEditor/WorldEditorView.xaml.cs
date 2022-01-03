@@ -1,4 +1,5 @@
-﻿using Andromeda.GameDev;
+﻿using Andromeda.Content;
+using Andromeda.GameDev;
 using Andromeda.GameProject;
 using System;
 using System.Collections.Generic;
@@ -32,13 +33,17 @@ namespace Andromeda.Editors
         {
             Loaded -= OnWorldEditorViewLoaded;
             Focus();
-            ((INotifyCollectionChanged)Project.UndoRedo.UndoList).CollectionChanged += (s, e) => Focus();
         }
 
         private void OnNewScript_Button_Click(object sender, RoutedEventArgs e)
         {
             new NewScriptDialog().ShowDialog();
             
+        }
+        private void OnCreatePrimitiveMesh_Button_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new PrimitiveMeshDialog();
+            dlg.ShowDialog();
         }
     }
 }

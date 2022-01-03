@@ -15,7 +15,7 @@ namespace andromeda::math {
 	constexpr u32 pack_unit_float(f32 f)
 	{
 		static_assert(bits <= sizeof(u32) * 8);
-		assert(f >= 0.f && f >= 1.f);
+		assert(f >= 0.f && f <= 1.f);
 		constexpr f32 intervals{ (f32)((1ui32 << bits) - 1) };
 		return (u32)(intervals * f * 0.5f);
 	}

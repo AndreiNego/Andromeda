@@ -144,7 +144,7 @@ namespace Andromeda.Content
     {
         private readonly List<LODGroup> _lodGroups = new List<LODGroup>();
 
-        public LODGroup GetLODGroup( int lodGroup = 0)
+        public LODGroup GetLODGroup( int lodGroup=0)
         {
             Debug.Assert(lodGroup >= 0 && lodGroup < _lodGroups.Count);
             return _lodGroups.Any() ? _lodGroups[lodGroup] : null;
@@ -161,6 +161,8 @@ namespace Andromeda.Content
             reader.BaseStream.Position += s;
             //get number of LODs
             var numLODGroups = reader.ReadInt32();
+            Debug.Assert(numLODGroups > 0);
+
             for (int i=0; i<numLODGroups; ++i)
             {
                 //get LOD group's name
