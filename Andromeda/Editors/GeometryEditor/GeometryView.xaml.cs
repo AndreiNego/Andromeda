@@ -88,12 +88,15 @@ namespace Andromeda.Editors
         }
         private void OnGrid_Mouse_RBD(object sender, MouseButtonEventArgs e)
         {
+            _clickedPosition = e.GetPosition(this);
             _capturedRight = true;
+            Mouse.Capture(sender as UIElement);
         }
 
         private void OnGrid_Mouse_RBU(object sender, MouseButtonEventArgs e)
         {
-
+            _capturedRight = false;
+            if(!_capturedLeft) Mouse.Capture(null);
         }
         private void OnGrid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
@@ -117,6 +120,7 @@ namespace Andromeda.Editors
                 var yOffset = d.Y * 0.001 * Math.Sqrt(cp.X * cp.X + cp.Z * cp.Z);
                 vm.CameraTarget = new Point3D(vm.CameraTarget.X, vm.CameraTarget.Y + yOffset, vm.CameraTarget.Z);
             }
+            _clickedPosition = pos;
         }
 
         private void MoveCamera(double dx, double dy, int dz)

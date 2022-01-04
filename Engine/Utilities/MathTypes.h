@@ -4,6 +4,7 @@
 
 namespace andromeda::math {
 	constexpr float pi = 3.14159265358979323f;
+	constexpr float two_pi = 6.283185307f;
 	constexpr float epsilon = 1e-5f; 
 #if defined (_WIN64)
 	using v2 = DirectX::XMFLOAT2;

@@ -20,6 +20,19 @@ namespace Andromeda.ContentToolsAPIStructs
         public byte ReverseHandedness = 0;
         public byte ImportEmbededTexture = 1;
         public byte ImportAnimations = 1;
+
+        private byte ToByte(bool value) => value ? (byte)1 : (byte)0;
+        public void FromContentSettings(Content.Geometry geomtry)
+        {
+            var settings = geomtry.ImportSettings;
+
+            SmoothingAngle = settings.SmoothingAngle;
+            CalculateNormals = ToByte(settings.CalculateNormals);
+            CalculateTangents = ToByte(settings.CalculateTangents);
+            ReverseHandedness = ToByte(settings.CalculateNormals);
+            ImportEmbededTexture = ToByte(settings.ImportEmbededTexture);
+            ImportAnimations = ToByte(settings.ImportAnimations);
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -67,6 +80,7 @@ namespace Andromeda.DllWrappers
             var sceneData = new SceneData();
             try
             {
+                sceneData.ImportSettings.FromContentSettings(geometry);
                 CreatePrimitiveMesh(sceneData, info);
                 Debug.Assert(sceneData.Data != IntPtr.Zero && sceneData.DataSize > 0);
                 var data = new byte[sceneData.DataSize];
