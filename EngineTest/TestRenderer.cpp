@@ -5,6 +5,7 @@
 #include "..\Graphics\Renderer.h"
 #include "TestRenderer.h"
 
+#if TEST_RENDERER
 using namespace andromeda;
 
 graphics::render_surface _surfaces[4];
@@ -58,10 +59,10 @@ engine_test::initialize()
 	if (!result) return result;
 	platform::window_init_info info[]
 	{
-		{&win_proc, nullptr, L"Test Window 1", 100, 100, 400, 800},
-		{&win_proc, nullptr, L"Test Window 2", 200, 100, 400, 800},
-		{&win_proc, nullptr, L"Test Window 3", 100, 200, 400, 800},
-		{&win_proc, nullptr, L"Test Window 4", 100, 100, 600, 800}
+		{&win_proc, nullptr, L"R Window 1", 100, 100, 400, 800},
+		{&win_proc, nullptr, L"R Window 2", 200, 100, 400, 800},
+		{&win_proc, nullptr, L"R Window 3", 100, 200, 400, 800},
+		{&win_proc, nullptr, L"R Window 4", 100, 100, 600, 800}
 	};
 	static_assert(_countof(info) == _countof(_surfaces));
 	for (u32 i{ 0 }; i < _countof(_surfaces); ++i)
@@ -84,3 +85,4 @@ engine_test::shutdown()
 	}
 	graphics::shutdown();
 }
+#endif

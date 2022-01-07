@@ -28,4 +28,9 @@ namespace andromeda::graphics {
 	void shutdown() {
 		gfx.shutdown();
 	}
+
+	void render()
+	{
+		gfx.render();
+	}
 }
