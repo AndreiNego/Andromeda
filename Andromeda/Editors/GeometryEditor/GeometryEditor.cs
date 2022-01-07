@@ -55,7 +55,7 @@ namespace Andromeda.Editors
     }
     //Note: this class enables viewing 3D geometry in WPF while we don't have a graphics renderer in the game engine
     //this class will be obsolete after renderer is introduced
-    class MeshRenderer : ViewModelBase
+     class MeshRenderer : ViewModelBase
     {
         public ObservableCollection<MeshRendererVertexData> Meshes { get; } = new ObservableCollection<MeshRendererVertexData>();
         private Vector3D _cameraDirection = new Vector3D(0,0,-10);

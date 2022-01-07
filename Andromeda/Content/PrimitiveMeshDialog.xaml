@@ -171,8 +171,8 @@
                             <DockPanel Margin="5,5,5,0">
                                 <TextBlock Text="Angle" Width="40" DockPanel.Dock="Left" VerticalAlignment="Center"/>
                                 <TextBlock Text="{Binding Path=Value, ElementName=angleSliderUVSphere}" Width="30" DockPanel.Dock="Right"/>
-                                <Slider Minimum="0" Maximum="180" HorizontalAlignment="Stretch" IsSnapToTickEnabled="True"
-                                        TickPlacement="BottomRight" x:Name="angleSliderUVSphere" Value="12" ValueChanged="OnSlider_ValueChanged"/>
+                                <Slider Minimum="0" Maximum="180" HorizontalAlignment="Stretch"
+                                         x:Name="angleSliderUVSphere" Value="12" ValueChanged="OnSlider_ValueChanged"/>
                             </DockPanel>
 
                         </StackPanel>
@@ -180,7 +180,7 @@
                     <Label Content="Angle"  VerticalAlignment="Top"
                            HorizontalAlignment="Left" Padding="5,0" Foreground="{StaticResource Editor.FontBrush}"/>
                 </Grid>
-                <Button Content="Save" Width="96" Margin="5,0"/>
+                <Button Content="Save" Width="96" Margin="5,0" Click="OnSave_Button_Click"/>
             </StackPanel>
 
 

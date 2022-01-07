@@ -1,9 +1,12 @@
 ﻿using Andromeda.ContentToolsAPIStructs;
 using Andromeda.DllWrappers;
 using Andromeda.Editors;
+using Andromeda.GameProject;
 using Andromeda.Utilities.Controls;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -87,9 +90,9 @@ namespace Andromeda.Content
         {
             var uris = new List<Uri>
             {
+                new Uri(@"pack://application:,,,/Resources/PrimitiveMeshView/UVCheckerMap.png"),
                 new Uri(@"pack://application:,,,/Resources/PrimitiveMeshView/PlaneTexture.png"),
-                new Uri(@"pack://application:,,,/Resources/PrimitiveMeshView/PlaneTexture.png"),
-                new Uri(@"pack://application:,,,/Resources/PrimitiveMeshView/PlaneTexture.png"),
+                new Uri(@"pack://application:,,,/Resources/PrimitiveMeshView/UVCheckerMap.png"),
             };
             _textures.Clear();
 
@@ -120,15 +123,33 @@ namespace Andromeda.Content
 
         private void OnTexture_CheckBox_Click(object sender, RoutedEventArgs e)
         {
-            Brush brush = Brushes.White;
-            if((sender as CheckBox).IsChecked == true)
+            Brush brush = _textures[(int)primTypeComboBox.SelectedItem];
+            if ((sender as CheckBox).IsChecked == true)
             {
                 brush = _textures[(int)primTypeComboBox.SelectedItem];
             }
-            var vm = DataContext as GeometryEditor;
+            else brush = Brushes.White;
+            GeometryEditor vm = DataContext as GeometryEditor;
             foreach (var mesh in vm.MeshRenderer.Meshes)
             {
                 mesh.Diffuse = brush;
+            }
+        }
+
+        private void OnSave_Button_Click(object sender,  RoutedEventArgs e)
+        {
+            var dlg = new SaveFileDialog()
+            {
+                InitialDirectory = Project.Current.ContentPath,
+                Filter = "Asset file (*asset)|*.asset"
+            };
+
+            if (dlg.ShowDialog() == true)
+            {
+                Debug.Assert(!string.IsNullOrEmpty(dlg.FileName));
+                var asset = (DataContext as IAssetEditor).Asset;
+                Debug.Assert(asset != null);
+                asset.Save(dlg.FileName);
             }
         }
     }
