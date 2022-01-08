@@ -12,37 +12,12 @@ namespace andromeda::platform {
 			DWORD style{ WS_VISIBLE };
 			bool is_fullscreen{ false };
 			bool is_closed{ false };
+
+			~window_info() { assert(!is_fullscreen); }
 		};
 		
-		utl::vector<window_info> windows;
-		//////////////////////////////////////////////////////////////////////
-		////TODO: this part will be handled by a free-list container later////
-		utl::vector<u32> available_slots;
+		utl::free_list<window_info> windows;
 
-		u32
-			add_to_windows(window_info info) {
-			u32 id{ u32_invalid_id };
-			if (available_slots.empty()) {
-				id = (u32)windows.size();
-				windows.emplace_back(info);
-			}
-			else
-			{
-				id = available_slots.back();
-				available_slots.pop_back();
-				assert(id != u32_invalid_id);
-				windows[id] = info;
-			}
-			return id;
-		}
-
-		void
-			remove_from_windows(u32 id)
-		{
-			assert(id < windows.size());
-			available_slots.emplace_back();
-		}
-		//////////////////////////////////////////////////////////////////////
 		window_info&
 			get_from_id(window_id id)
 		{
@@ -245,7 +220,7 @@ namespace andromeda::platform {
 		if (info.hwnd)
 		{
 			SetLastError(0);
-			window_id id{ add_to_windows(info) };
+			window_id id{ windows.add(info) };
 			SetWindowLongPtr(info.hwnd, GWLP_USERDATA, (LONG_PTR)id);
 
 			//Set in the extra bytes the pointer to the window callback function
@@ -264,7 +239,7 @@ namespace andromeda::platform {
 	{
 		window_info& info{ get_from_id(id) };
 		DestroyWindow(info.hwnd);
-		remove_from_windows(id);
+		windows.remove(id);
 	}
 
 #else

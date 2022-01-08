@@ -16,12 +16,18 @@ namespace andromeda::graphics::d3d12{
 	{
 		assert(factory && cmd_queue);
 		release();
+		factory->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &_allow_tearing, sizeof(u32));
+		if (_allow_tearing)
+		{
+			_present_flags = DXGI_PRESENT_ALLOW_TEARING;
+		}
+		_allow_tearing = _present_flags = 0;
 
 		DXGI_SWAP_CHAIN_DESC1 desc{};
 		desc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
 		desc.BufferCount = frame_buffer_count;
 		desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		desc.Flags = 0;
+		desc.Flags = _allow_tearing ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
 		desc.Format = to_non_srgb(format);
 		desc.Height = _window.height();
 		desc.Width = _window.width();
@@ -52,7 +58,7 @@ namespace andromeda::graphics::d3d12{
 		d3d12_surface::present() const
 	{
 		assert(_swap_chain);
-		DXCall(_swap_chain->Present(0, 0));
+		DXCall(_swap_chain->Present(0, _present_flags));
 		_current_bb_index = _swap_chain->GetCurrentBackBufferIndex();
 	}
 

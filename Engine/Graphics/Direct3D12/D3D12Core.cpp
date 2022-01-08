@@ -174,7 +174,7 @@ namespace andromeda::graphics::d3d12::core {
 
 		utl::vector<IUnknown*>	deferred_releases[frame_buffer_count]{};
 		u32						deferred_releases_flag[frame_buffer_count]{};
-		std::mutex				deferred_releases_mutx{};
+		std::mutex				deferred_releases_mutex{};
 
 		constexpr DXGI_FORMAT render_target_format{ DXGI_FORMAT_R8G8B8A8_UNORM_SRGB };
 		constexpr D3D_FEATURE_LEVEL minimum_feature_level{ D3D_FEATURE_LEVEL_11_0 };
@@ -230,7 +230,7 @@ namespace andromeda::graphics::d3d12::core {
 		void __declspec(noinline)
 			process_deferred_releases(u32 frame_idx)
 		{
-			std::lock_guard lock{ deferred_releases_mutx };
+			std::lock_guard lock{ deferred_releases_mutex };
 
 			//NOTE: we clear the flag in the beginning. If we'd clear it at the end then it might overwrite some other thread that was trying to set it.
 			//It's fine if overwriting happens before processing the items.
@@ -254,7 +254,7 @@ namespace andromeda::graphics::d3d12::core {
 		void deferred_release(IUnknown* resource)
 		{
 			const u32 frame_idx{current_frame_index()};
-			std::lock_guard lock{ deferred_releases_mutx };
+			std::lock_guard lock{ deferred_releases_mutex };
 			deferred_releases[frame_idx].push_back(resource);
 			set_deferred_releases_flag();
 		}

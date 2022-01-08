@@ -36,3 +36,5 @@ namespace andromeda::utl {
 namespace andromeda::utl {
 	
 }
+
+#include "FreeList.h"
